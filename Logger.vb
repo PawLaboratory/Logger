@@ -23,7 +23,8 @@ Public NotInheritable Class Logger
 #Region "初始化"
     '单例实例
     Private Shared _instance As Logger
-    Private Shared ReadOnly _lockObj As New Object()
+    Private Shared ReadOnly _initLockObj As New Object() '初始化对象锁
+    Private Shared ReadOnly _logLockObj As New Object() '日志行锁
     '基本属性
     Private _logPath As String
     Private _logFile As String
@@ -52,7 +53,7 @@ Public NotInheritable Class Logger
     ''' 初始化 Logger 实例
     ''' </summary>
     Public Shared Sub Initialize(config As LoggerConfig)
-        SyncLock _lockObj '保证原子性
+        SyncLock _initLockObj '保证原子性
             If _isInitialized Then
                 Throw New InvalidOperationException("PawLab.Logger has been initialized")
             End If
@@ -69,7 +70,7 @@ Public NotInheritable Class Logger
     Public Shared ReadOnly Property Instance As Logger
         Get
             If Not _isInitialized Then
-                SyncLock _lockObj
+                SyncLock _initLockObj
                     If Not _isInitialized Then
                         Throw New InvalidOperationException("Please initialize PawLab.Logger first")
                     End If
@@ -79,32 +80,34 @@ Public NotInheritable Class Logger
         End Get
     End Property
     Private Sub Log(message As String, level As LogLevel, Optional ex As Exception = Nothing)
-        '过滤掉低于特定等级的消息
-        If level < _minLogLevel Then Return
-        Dim logEntry As New StringBuilder(_logFormat)
-        '替换占位符
-        logEntry.Replace("{timestamp}", $"{ChrW(&HA7)}8{Now.ToString(_dateFormat)}{ChrW(&HA7)}r")
-        logEntry.Replace("{level}", LoglevelStr(_logLevelLength, level))
-        logEntry.Replace("{message}", message)
-        '如果有异常, 添加异常信息
-        If ex IsNot Nothing Then
-            logEntry.AppendLine()
-            logEntry.AppendLine($"Exception: {ex.GetType}")
-            logEntry.AppendLine($"{ex.StackTrace}")
-        End If
-        '将日志输出到控制台
-        ConsoleWriteLineWithColor(logEntry.ToString())
-        '将日志写入到文件
-        Try
-            Dim logMessage As String = RemoveColorCodes(logEntry.ToString()) '将颜色字符过滤以便写入文件
-            Using writer As New StreamWriter(Path.Combine(_logPath, _logFile), True, _encoding) '将过滤后的字符写入文件
-                writer.WriteLine(logMessage)
-                If _autoFlush Then writer.Flush() '刷新缓冲区
-            End Using
-        Catch exIO As IOException
-            '如果文件写入失败, 尝试输出到控制台
-            Log($"Cannot write log file: {exIO.Message}", LogLevel.ERROR)
-        End Try
+        SyncLock _logLockObj '确保日志不会乱掉
+            '过滤掉低于特定等级的消息
+            If level < _minLogLevel Then Return
+            Dim logEntry As New StringBuilder(_logFormat)
+            '替换占位符
+            logEntry.Replace("{timestamp}", $"{ChrW(&HA7)}8{Now.ToString(_dateFormat)}{ChrW(&HA7)}r")
+            logEntry.Replace("{level}", LoglevelStr(_logLevelLength, level))
+            logEntry.Replace("{message}", message)
+            '如果有异常, 添加异常信息
+            If ex IsNot Nothing Then
+                logEntry.AppendLine()
+                logEntry.AppendLine($"Exception: {ex.GetType}")
+                logEntry.AppendLine($"{ex.StackTrace}")
+            End If
+            '将日志输出到控制台
+            ConsoleWriteLineWithColor(logEntry.ToString())
+            '将日志写入到文件
+            Try
+                Dim logMessage As String = RemoveColorCodes(logEntry.ToString()) '将颜色字符过滤以便写入文件
+                Using writer As New StreamWriter(Path.Combine(_logPath, _logFile), True, _encoding) '将过滤后的字符写入文件
+                    writer.WriteLine(logMessage)
+                    If _autoFlush Then writer.Flush() '刷新缓冲区
+                End Using
+            Catch exIO As IOException
+                '如果文件写入失败, 尝试输出到控制台
+                Log($"Cannot write log file: {exIO.Message}", LogLevel.ERROR)
+            End Try
+        End SyncLock
     End Sub
     'DEBUG, INFO, WARN, ERROR
     Private Shared ReadOnly colorArray As String() = {"b", "a", "e", "c"}
