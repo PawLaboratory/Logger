@@ -1,4 +1,4 @@
-# Logger
+ï»¿# Logger
 
 A lightweight logging system for .NET applications with colorful console output and file logging support.
 
@@ -8,7 +8,7 @@ A lightweight logging system for .NET applications with colorful console output 
 
 ## Features
 
-- Color-coded console output using Minecraft-style color codes (`¡ì` + color character)
+- Color-coded console output using Minecraft-style color codes (`Â§` + color character)
 - Configurable log levels (DEBUG, INFO, WARN, ERROR)
 - Customizable log format with placeholders
 - File logging with configurable encoding and auto-flush
@@ -71,9 +71,9 @@ Before using the logger, you must initialize it with a `LoggerConfig` object. Th
 
 ### LogLevelLength Enum
 
-- `Short` ¨C single letter (D, I, W, E)
-- `Medium` ¨C three letters (DBG, INF, WRN, ERR)
-- `Standard` ¨C full names (DEBUG, INFO, WARN, ERROR)
+- `Short` â€“ single letter (D, I, W, E)
+- `Medium` â€“ three letters (DBG, INF, WRN, ERR)
+- `Standard` â€“ full names (DEBUG, INFO, WARN, ERROR)
 
 ---
 
@@ -154,7 +154,7 @@ Logger.Error("An error occurred", ex);   // ex is an optional Exception
 
 ### Color Codes
 
-The logger supports inline color codes using the `¡ì` symbol followed by a color character. The following colors are available:
+The logger supports inline color codes using the `Â§` symbol followed by a color character. The following colors are available:
 
 | Code | Color          | Code | Color          |
 |------|----------------|------|----------------|
@@ -171,7 +171,7 @@ The logger supports inline color codes using the `¡ì` symbol followed by a color
 Example:
 
 ```vbnet
-Logger.Info("¡ìaThis is green text¡ìr and this is default gray")
+Logger.Info("Â§aThis is green textÂ§r and this is default gray")
 ```
 
 Color codes are automatically stripped from the file output to keep log files clean.
@@ -180,9 +180,9 @@ Color codes are automatically stripped from the file output to keep log files cl
 
 You can customize the log format by setting the `LogFormat` property in `LoggerConfig`. Available placeholders:
 
-- `{timestamp}` ¨C formatted timestamp (using `DateFormat`)
-- `{level}` ¨C colored level text (brackets and color included)
-- `{message}` ¨C the log message
+- `{timestamp}` â€“ formatted timestamp (using `DateFormat`)
+- `{level}` â€“ colored level text (brackets and color included)
+- `{message}` â€“ the log message
 
 Example format: `"[{timestamp}] {level}: {message}"`
 
@@ -237,7 +237,7 @@ If file writing fails (e.g., due to permission issues), the logger will attempt 
 
 ## Notes
 
-- The color code character is the section sign (`¡ì`, Unicode U+00A7). In source code, you can use `ChrW(&HA7)` in VB.NET or `'\u00A7'` in C# if needed.
+- The color code character is the section sign (`Â§`, Unicode U+00A7). In source code, you can use `ChrW(&HA7)` in VB.NET or `'\u00A7'` in C# if needed.
 - The logger is thread-safe for initialization and instance access.
 - Log files are appended; they are not rotated automatically. You may implement your own rotation logic externally.
 
