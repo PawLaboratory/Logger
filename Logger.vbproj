@@ -29,6 +29,7 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<None Include=".github\workflows\nuget.yml" />
 		<None Include="README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 </Project>
