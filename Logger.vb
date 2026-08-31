@@ -168,7 +168,7 @@ Public NotInheritable Class Logger
         Dim result As New StringBuilder()
         Dim i As Integer = 0
         While i < Input.Length
-            If Input(i) = "§"c AndAlso i + 1 < Input.Length Then
+            If Input(i) = ChrW(&HA7) AndAlso i + 1 < Input.Length Then 'ChrW(&HA7) 是 "§"c 的转义, 避免编译问题
                 '跳过颜色代码
                 i += 2
             Else
@@ -186,7 +186,7 @@ Public NotInheritable Class Logger
         Dim buffer As New StringBuilder()
         Dim currentColor As ConsoleColor = Console.ForegroundColor
         For i As Integer = 0 To message.Length - 1
-            If message(i) = "§"c AndAlso i + 1 < message.Length Then
+            If message(i) = ChrW(&HA7) AndAlso i + 1 < message.Length Then '同理...
                 '输出缓冲内容(应用当前颜色)
                 If buffer.Length > 0 Then
                     Console.Write(buffer.ToString())
