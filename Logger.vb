@@ -46,6 +46,7 @@ Public NotInheritable Class Logger
         _dateFormat = config.DateFormat
         _logFormat = config.LogFormat
         _logLevelLength = config.LevelLength
+        Directory.CreateDirectory(_logPath) '如果目录不存在则新建
     End Sub
     ''' <summary>
     ''' 初始化 Logger 实例
@@ -82,7 +83,7 @@ Public NotInheritable Class Logger
         If level < _minLogLevel Then Return
         Dim logEntry As New StringBuilder(_logFormat)
         '替换占位符
-        logEntry.Replace("{timestamp}", $"§8{Now.ToString(_dateFormat)}§r")
+        logEntry.Replace("{timestamp}", $"{ChrW(&HA7)}8{Now.ToString(_dateFormat)}{ChrW(&HA7)}r")
         logEntry.Replace("{level}", LoglevelStr(_logLevelLength, level))
         logEntry.Replace("{message}", message)
         '如果有异常, 添加异常信息
@@ -123,7 +124,7 @@ Public NotInheritable Class Logger
     Private Function LoglevelStr(length As LogLevelLength, level As LogLevel) As String
         Dim levelIndex = CInt(level)
         Dim lengthIndex = CInt(length)
-        Return $"§r[§{colorArray(levelIndex)}{textArray(levelIndex, lengthIndex)}§r]"
+        Return $"{ChrW(&HA7)}r[{ChrW(&HA7)}{colorArray(levelIndex)}{textArray(levelIndex, lengthIndex)}{ChrW(&HA7)}r]" '{ChrW(&HA7)} = §
     End Function
 #End Region
 
