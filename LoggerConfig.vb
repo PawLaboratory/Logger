@@ -10,6 +10,10 @@ Public Class LoggerConfig
     ''' </summary>
     Public Property LogPath As String = Path.Combine(AppContext.BaseDirectory, "Logs")
     ''' <summary>
+    ''' 日志文件名
+    ''' </summary>
+    Public Property LogFile As String = "Latest.log"
+    ''' <summary>
     ''' 最低日志级别
     ''' </summary>
     Public Property MinLogLevel As LogLevel = LogLevel.INFO

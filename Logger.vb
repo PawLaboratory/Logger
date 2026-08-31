@@ -12,6 +12,7 @@ Public NotInheritable Class Logger
     Private Shared ReadOnly _lockObj As New Object()
     '基本属性
     Private _logPath As String
+    Private _logFile As String
     Private _minLogLevel As LogLevel
     Private _autoFlush As Boolean
     Private _encoding As Encoding
@@ -24,6 +25,7 @@ Public NotInheritable Class Logger
     Private Sub New(config As LoggerConfig)
         If config Is Nothing Then config = _defaultConfig '如果配置参数不存在, 则使用默认配置
         _logPath = config.LogPath
+        _logFile = config.LogFile
         _minLogLevel = config.MinLogLevel
         _autoFlush = config.AutoFlush
         _encoding = config.Encoding
@@ -81,7 +83,7 @@ Public NotInheritable Class Logger
         '将日志写入到文件
         Try
             Dim logMessage As String = RemoveColorCodes(logEntry.ToString()) '将颜色字符过滤以便写入文件
-            Using writer As New StreamWriter(Path.Combine(_logPath, "Latest.log"), True, _encoding) '将过滤后的字符写入文件
+            Using writer As New StreamWriter(Path.Combine(_logPath, _logFile), True, _encoding) '将过滤后的字符写入文件
                 writer.WriteLine(logMessage)
                 If _autoFlush Then writer.Flush() '刷新缓冲区
             End Using
@@ -224,7 +226,7 @@ Public NotInheritable Class Logger
     ''' </summary>
     Public ReadOnly Property LogFilePath As String
         Get
-            Return Path.Combine(_logPath, "Latest.log")
+            Return Path.Combine(_logPath, _logFile)
         End Get
     End Property
     ''' <summary>
