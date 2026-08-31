@@ -37,7 +37,6 @@ Public NotInheritable Class Logger
     ''' 初始化 Logger 实例
     ''' </summary>
     Public Shared Sub Initialize(config As LoggerConfig)
-        ArgumentNullException.ThrowIfNull(config) '配置不存在时抛出异常
         SyncLock _lockObj '保证原子性
             If _isInitialized Then
                 Throw New InvalidOperationException("PawLab.Logger has been initialized")
