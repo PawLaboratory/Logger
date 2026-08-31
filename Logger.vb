@@ -124,7 +124,8 @@ Public NotInheritable Class Logger
     Private Function LoglevelStr(length As LogLevelLength, level As LogLevel) As String
         Dim levelIndex = CInt(level)
         Dim lengthIndex = CInt(length)
-        Return $"{ChrW(&HA7)}r[{ChrW(&HA7)}{colorArray(levelIndex)}{textArray(levelIndex, lengthIndex)}{ChrW(&HA7)}r]" '{ChrW(&HA7)} = §
+        Return $"{ChrW(&HA7)}r[{ChrW(&HA7)}{colorArray(levelIndex)}{textArray(levelIndex, lengthIndex)}{ChrW(&HA7)}r]" '{ChrW(&HA7)} 是分节符
+        '该符号无法出现在代码中, 若需要复制请前往 https://zh.wikipedia.org/wiki/%E5%88%86%E8%8A%82%E7%AC%A6%E5%8F%B7
     End Function
 #End Region
 
@@ -183,7 +184,7 @@ Public NotInheritable Class Logger
         Dim result As New StringBuilder()
         Dim i As Integer = 0
         While i < Input.Length
-            If Input(i) = ChrW(&HA7) AndAlso i + 1 < Input.Length Then 'ChrW(&HA7) 是 "§"c 的转义, 避免编译问题
+            If Input(i) = ChrW(&HA7) AndAlso i + 1 < Input.Length Then 'ChrW(&HA7) 是 "x"c(分节符) 的转义, 避免编译问题
                 '跳过颜色代码
                 i += 2
             Else
