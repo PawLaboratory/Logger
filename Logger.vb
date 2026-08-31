@@ -1,4 +1,4 @@
-' Logger - A logging system with colorful text
+ï»¿' Logger - A logging system with colorful text
 ' Copyright 2026 xionglongztz/PawLaboratory
 '
 ' Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,15 +16,15 @@ Imports System.IO
 Imports System.Text
 
 ''' <summary>
-''' È«¾ÖÈÕÖ¾¼ÇÂ¼Æ÷ÊµÀı, ´ËÀàÎŞ·¨±»¼Ì³Ğ
+''' å…¨å±€æ—¥å¿—è®°å½•å™¨å®ä¾‹, æ­¤ç±»æ— æ³•è¢«ç»§æ‰¿
 ''' </summary>
 Public NotInheritable Class Logger
 
-#Region "³õÊ¼»¯"
-    'µ¥ÀıÊµÀı
+#Region "åˆå§‹åŒ–"
+    'å•ä¾‹å®ä¾‹
     Private Shared _instance As Logger
     Private Shared ReadOnly _lockObj As New Object()
-    '»ù±¾ÊôĞÔ
+    'åŸºæœ¬å±æ€§
     Private _logPath As String
     Private _logFile As String
     Private _minLogLevel As LogLevel
@@ -33,11 +33,11 @@ Public NotInheritable Class Logger
     Private _dateFormat As String
     Private _logFormat As String
     Private _logLevelLength As LogLevelLength
-    Private Shared ReadOnly _defaultConfig As New LoggerConfig() 'Ä¬ÈÏÅäÖÃ
+    Private Shared ReadOnly _defaultConfig As New LoggerConfig() 'é»˜è®¤é…ç½®
     Private Shared _isInitialized As Boolean = False
-    'Ë½ÓĞ¹¹Ôìº¯Êı
+    'ç§æœ‰æ„é€ å‡½æ•°
     Private Sub New(config As LoggerConfig)
-        If config Is Nothing Then config = _defaultConfig 'Èç¹ûÅäÖÃ²ÎÊı²»´æÔÚ, ÔòÊ¹ÓÃÄ¬ÈÏÅäÖÃ
+        If config Is Nothing Then config = _defaultConfig 'å¦‚æœé…ç½®å‚æ•°ä¸å­˜åœ¨, åˆ™ä½¿ç”¨é»˜è®¤é…ç½®
         _logPath = config.LogPath
         _logFile = config.LogFile
         _minLogLevel = config.MinLogLevel
@@ -46,13 +46,13 @@ Public NotInheritable Class Logger
         _dateFormat = config.DateFormat
         _logFormat = config.LogFormat
         _logLevelLength = config.LevelLength
-        Directory.CreateDirectory(_logPath) 'Èç¹ûÄ¿Â¼²»´æÔÚÔòĞÂ½¨
+        Directory.CreateDirectory(_logPath) 'å¦‚æœç›®å½•ä¸å­˜åœ¨åˆ™æ–°å»º
     End Sub
     ''' <summary>
-    ''' ³õÊ¼»¯ Logger ÊµÀı
+    ''' åˆå§‹åŒ– Logger å®ä¾‹
     ''' </summary>
     Public Shared Sub Initialize(config As LoggerConfig)
-        SyncLock _lockObj '±£Ö¤Ô­×ÓĞÔ
+        SyncLock _lockObj 'ä¿è¯åŸå­æ€§
             If _isInitialized Then
                 Throw New InvalidOperationException("PawLab.Logger has been initialized")
             End If
@@ -62,9 +62,9 @@ Public NotInheritable Class Logger
     End Sub
 #End Region
 
-#Region "ÊµÀıÏà¹Ø·½·¨"
+#Region "å®ä¾‹ç›¸å…³æ–¹æ³•"
     ''' <summary>
-    ''' »ñÈ¡µ¥ÀıÊµÀı
+    ''' è·å–å•ä¾‹å®ä¾‹
     ''' </summary>
     Public Shared ReadOnly Property Instance As Logger
         Get
@@ -79,36 +79,36 @@ Public NotInheritable Class Logger
         End Get
     End Property
     Private Sub Log(message As String, level As LogLevel, Optional ex As Exception = Nothing)
-        '¹ıÂËµôµÍÓÚÌØ¶¨µÈ¼¶µÄÏûÏ¢
+        'è¿‡æ»¤æ‰ä½äºç‰¹å®šç­‰çº§çš„æ¶ˆæ¯
         If level < _minLogLevel Then Return
         Dim logEntry As New StringBuilder(_logFormat)
-        'Ìæ»»Õ¼Î»·û
+        'æ›¿æ¢å ä½ç¬¦
         logEntry.Replace("{timestamp}", $"{ChrW(&HA7)}8{Now.ToString(_dateFormat)}{ChrW(&HA7)}r")
         logEntry.Replace("{level}", LoglevelStr(_logLevelLength, level))
         logEntry.Replace("{message}", message)
-        'Èç¹ûÓĞÒì³£, Ìí¼ÓÒì³£ĞÅÏ¢
+        'å¦‚æœæœ‰å¼‚å¸¸, æ·»åŠ å¼‚å¸¸ä¿¡æ¯
         If ex IsNot Nothing Then
             logEntry.AppendLine()
             logEntry.AppendLine($"Exception: {ex.GetType}")
             logEntry.AppendLine($"{ex.StackTrace}")
         End If
-        '½«ÈÕÖ¾Êä³öµ½¿ØÖÆÌ¨
+        'å°†æ—¥å¿—è¾“å‡ºåˆ°æ§åˆ¶å°
         ConsoleWriteLineWithColor(logEntry.ToString())
-        '½«ÈÕÖ¾Ğ´Èëµ½ÎÄ¼ş
+        'å°†æ—¥å¿—å†™å…¥åˆ°æ–‡ä»¶
         Try
-            Dim logMessage As String = RemoveColorCodes(logEntry.ToString()) '½«ÑÕÉ«×Ö·û¹ıÂËÒÔ±ãĞ´ÈëÎÄ¼ş
-            Using writer As New StreamWriter(Path.Combine(_logPath, _logFile), True, _encoding) '½«¹ıÂËºóµÄ×Ö·ûĞ´ÈëÎÄ¼ş
+            Dim logMessage As String = RemoveColorCodes(logEntry.ToString()) 'å°†é¢œè‰²å­—ç¬¦è¿‡æ»¤ä»¥ä¾¿å†™å…¥æ–‡ä»¶
+            Using writer As New StreamWriter(Path.Combine(_logPath, _logFile), True, _encoding) 'å°†è¿‡æ»¤åçš„å­—ç¬¦å†™å…¥æ–‡ä»¶
                 writer.WriteLine(logMessage)
-                If _autoFlush Then writer.Flush() 'Ë¢ĞÂ»º³åÇø
+                If _autoFlush Then writer.Flush() 'åˆ·æ–°ç¼“å†²åŒº
             End Using
         Catch exIO As IOException
-            'Èç¹ûÎÄ¼şĞ´ÈëÊ§°Ü, ³¢ÊÔÊä³öµ½¿ØÖÆÌ¨
+            'å¦‚æœæ–‡ä»¶å†™å…¥å¤±è´¥, å°è¯•è¾“å‡ºåˆ°æ§åˆ¶å°
             Log($"Cannot write log file: {exIO.Message}", LogLevel.ERROR)
         End Try
     End Sub
     'DEBUG, INFO, WARN, ERROR
     Private Shared ReadOnly colorArray As String() = {"b", "a", "e", "c"}
-    'ĞĞ¶ÔÓ¦ Level, ÁĞ¶ÔÓ¦ Length
+    'è¡Œå¯¹åº” Level, åˆ—å¯¹åº” Length
     Private Shared ReadOnly textArray As String(,) = {
     {"D", "DBG", "DEBUG"},
     {"I", "INF", "INFO"},
@@ -116,47 +116,47 @@ Public NotInheritable Class Logger
     {"E", "ERR", "ERROR"}
 }
     ''' <summary>
-    ''' ¸ù¾İÈÕÖ¾¼¶±ğÓë³¤¶È×Ô¶¯¸ñÊ½»¯
+    ''' æ ¹æ®æ—¥å¿—çº§åˆ«ä¸é•¿åº¦è‡ªåŠ¨æ ¼å¼åŒ–
     ''' </summary>
-    ''' <param name="length">ÈÕÖ¾¼¶±ğ³¤¶ÈÃ¶¾Ù</param>
-    ''' <param name="level">ÈÕÖ¾¼¶±ğÃ¶¾Ù</param>
+    ''' <param name="length">æ—¥å¿—çº§åˆ«é•¿åº¦æšä¸¾</param>
+    ''' <param name="level">æ—¥å¿—çº§åˆ«æšä¸¾</param>
     ''' <returns></returns>
     Private Function LoglevelStr(length As LogLevelLength, level As LogLevel) As String
         Dim levelIndex = CInt(level)
         Dim lengthIndex = CInt(length)
-        Return $"{ChrW(&HA7)}r[{ChrW(&HA7)}{colorArray(levelIndex)}{textArray(levelIndex, lengthIndex)}{ChrW(&HA7)}r]" '{ChrW(&HA7)} ÊÇ·Ö½Ú·û
-        '¸Ã·ûºÅÎŞ·¨³öÏÖÔÚ´úÂëÖĞ, ÈôĞèÒª¸´ÖÆÇëÇ°Íù https://zh.wikipedia.org/wiki/%E5%88%86%E8%8A%82%E7%AC%A6%E5%8F%B7
+        Return $"{ChrW(&HA7)}r[{ChrW(&HA7)}{colorArray(levelIndex)}{textArray(levelIndex, lengthIndex)}{ChrW(&HA7)}r]" '{ChrW(&HA7)} æ˜¯åˆ†èŠ‚ç¬¦
+        'è¯¥ç¬¦å·æ— æ³•å‡ºç°åœ¨ä»£ç ä¸­, è‹¥éœ€è¦å¤åˆ¶è¯·å‰å¾€ https://zh.wikipedia.org/wiki/%E5%88%86%E8%8A%82%E7%AC%A6%E5%8F%B7
     End Function
 #End Region
 
-#Region "Íâ²¿ÈÕÖ¾·½·¨"
+#Region "å¤–éƒ¨æ—¥å¿—æ–¹æ³•"
     ''' <summary>
-    ''' Êä³öÒ»Ìõ¡°µ÷ÊÔ¡±ÈÕÖ¾
+    ''' è¾“å‡ºä¸€æ¡â€œè°ƒè¯•â€æ—¥å¿—
     ''' </summary>
     Public Shared Sub Debug(message As String)
         Instance.Log(message, LogLevel.DEBUG)
     End Sub
     ''' <summary>
-    ''' Êä³öÒ»Ìõ¡°ĞÅÏ¢¡±ÈÕÖ¾
+    ''' è¾“å‡ºä¸€æ¡â€œä¿¡æ¯â€æ—¥å¿—
     ''' </summary>
     Public Shared Sub Info(message As String)
         Instance.Log(message, LogLevel.INFO)
     End Sub
     ''' <summary>
-    ''' Êä³öÒ»Ìõ¡°¾¯¸æ¡±ÈÕÖ¾
+    ''' è¾“å‡ºä¸€æ¡â€œè­¦å‘Šâ€æ—¥å¿—
     ''' </summary>
     Public Shared Sub Warning(message As String)
         Instance.Log(message, LogLevel.WARN)
     End Sub
     ''' <summary>
-    ''' Êä³öÒ»Ìõ¡°´íÎó¡±ÈÕÖ¾
+    ''' è¾“å‡ºä¸€æ¡â€œé”™è¯¯â€æ—¥å¿—
     ''' </summary>
     Public Shared Sub [Error](message As String, Optional ex As Exception = Nothing)
         Instance.Log(message, LogLevel.ERROR, ex)
     End Sub
 #End Region
 
-#Region "²ÊÉ«×Ö·û·½·¨"
+#Region "å½©è‰²å­—ç¬¦æ–¹æ³•"
     Private ReadOnly colorCodes As New Dictionary(Of Char, ConsoleColor) From {
     {"0", ConsoleColor.Black},
     {"1", ConsoleColor.DarkBlue},
@@ -174,18 +174,18 @@ Public NotInheritable Class Logger
     {"d", ConsoleColor.Magenta},
     {"e", ConsoleColor.Yellow},
     {"f", ConsoleColor.White},
-    {"r", ConsoleColor.Gray} 'ÖØÖÃÑÕÉ«(Ä¬ÈÏÎª»ÒÉ«)
-} 'ÑÕÉ«³£Á¿±í
+    {"r", ConsoleColor.Gray} 'é‡ç½®é¢œè‰²(é»˜è®¤ä¸ºç°è‰²)
+} 'é¢œè‰²å¸¸é‡è¡¨
     ''' <summary>
-    ''' ¹ıÂËÑÕÉ«×Ö·û
+    ''' è¿‡æ»¤é¢œè‰²å­—ç¬¦
     ''' </summary>
-    ''' <param name="Input">ÎÄ×ÖÄÚÈİ</param>
+    ''' <param name="Input">æ–‡å­—å†…å®¹</param>
     Private Function RemoveColorCodes(Input As String) As String
         Dim result As New StringBuilder()
         Dim i As Integer = 0
         While i < Input.Length
-            If Input(i) = ChrW(&HA7) AndAlso i + 1 < Input.Length Then 'ChrW(&HA7) ÊÇ "x"c(·Ö½Ú·û) µÄ×ªÒå, ±ÜÃâ±àÒëÎÊÌâ
-                'Ìø¹ıÑÕÉ«´úÂë
+            If Input(i) = ChrW(&HA7) AndAlso i + 1 < Input.Length Then 'ChrW(&HA7) æ˜¯ "x"c(åˆ†èŠ‚ç¬¦) çš„è½¬ä¹‰, é¿å…ç¼–è¯‘é—®é¢˜
+                'è·³è¿‡é¢œè‰²ä»£ç 
                 i += 2
             Else
                 result.Append(Input(i))
@@ -195,41 +195,41 @@ Public NotInheritable Class Logger
         Return result.ToString()
     End Function
     ''' <summary>
-    ''' Êä³ö´øÑÕÉ«µÄÈÕÖ¾
+    ''' è¾“å‡ºå¸¦é¢œè‰²çš„æ—¥å¿—
     ''' </summary>
-    ''' <param name="message">ÎÄ×ÖÄÚÈİ</param>
+    ''' <param name="message">æ–‡å­—å†…å®¹</param>
     Private Sub ConsoleWriteLineWithColor(message As String)
         Dim buffer As New StringBuilder()
         Dim currentColor As ConsoleColor = Console.ForegroundColor
         For i As Integer = 0 To message.Length - 1
-            If message(i) = ChrW(&HA7) AndAlso i + 1 < message.Length Then 'Í¬Àí...
-                'Êä³ö»º³åÄÚÈİ(Ó¦ÓÃµ±Ç°ÑÕÉ«)
+            If message(i) = ChrW(&HA7) AndAlso i + 1 < message.Length Then 'åŒç†...
+                'è¾“å‡ºç¼“å†²å†…å®¹(åº”ç”¨å½“å‰é¢œè‰²)
                 If buffer.Length > 0 Then
                     Console.Write(buffer.ToString())
                     buffer.Clear()
                 End If
-                '´¦ÀíÑÕÉ«´úÂë
+                'å¤„ç†é¢œè‰²ä»£ç 
                 Dim code As Char = message(i + 1)
                 If colorCodes.ContainsKey(code) Then
                     Console.ForegroundColor = colorCodes(code)
                 End If
-                i += 1 'Ìø¹ıÑÕÉ«´úÂë
+                i += 1 'è·³è¿‡é¢œè‰²ä»£ç 
             Else
                 buffer.Append(message(i))
             End If
         Next
-        If buffer.Length > 0 Then 'Êä³öÊ£ÓàÄÚÈİ
+        If buffer.Length > 0 Then 'è¾“å‡ºå‰©ä½™å†…å®¹
             Console.Write(buffer.ToString().TrimEnd())
         End If
-        'ÖØÖÃÑÕÉ«
+        'é‡ç½®é¢œè‰²
         Console.ForegroundColor = currentColor
         Console.WriteLine()
     End Sub
 #End Region
 
-#Region "ÈÕÖ¾ÏµÍ³Ïà¹ØÊôĞÔ"
+#Region "æ—¥å¿—ç³»ç»Ÿç›¸å…³å±æ€§"
     ''' <summary>
-    ''' »ñµÃµ±Ç°ÈÕÖ¾ÏµÍ³×îµÍÈÕÖ¾¼¶±ğ
+    ''' è·å¾—å½“å‰æ—¥å¿—ç³»ç»Ÿæœ€ä½æ—¥å¿—çº§åˆ«
     ''' </summary>
     Public ReadOnly Property MinLogLevel As LogLevel
         Get
@@ -237,7 +237,7 @@ Public NotInheritable Class Logger
         End Get
     End Property
     ''' <summary>
-    ''' »ñµÃµ±Ç°ÈÕÖ¾ÎÄ¼şÂ·¾¶
+    ''' è·å¾—å½“å‰æ—¥å¿—æ–‡ä»¶è·¯å¾„
     ''' </summary>
     Public ReadOnly Property LogFilePath As String
         Get
@@ -245,7 +245,7 @@ Public NotInheritable Class Logger
         End Get
     End Property
     ''' <summary>
-    ''' »ñµÃµ±Ç°ÈÕÖ¾Ä¿Â¼
+    ''' è·å¾—å½“å‰æ—¥å¿—ç›®å½•
     ''' </summary>
     Public ReadOnly Property LogPath As String
         Get
